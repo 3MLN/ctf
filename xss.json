@@ -5,7 +5,7 @@
    "time":"2h 30m",
    "difficulty":"Medium",
    "emoji":"🍝",
-   "description":"document.cookie",
+   "description":document.cookie,
    "ingredients":[
       "Fresh pasta sheets",
       "Bolognese ragù",
