@@ -1,0 +1,17 @@
+{
+   "id":1,
+   "title":"Cookies",
+   "category":"pasta",
+   "time":"2h 30m",
+   "difficulty":"Medium",
+   "emoji":"🍝",
+   "description":"document.cookie",
+   "ingredients":[
+      "Fresh pasta sheets",
+      "Bolognese ragù",
+      "Béchamel sauce",
+      "Parmigiano-Reggiano",
+      "Butter",
+      "Nutmeg"
+   ]
+}
