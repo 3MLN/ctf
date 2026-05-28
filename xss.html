@@ -14,7 +14,7 @@
                 const results = [];
                 
                 // Try IDs 1 through 50
-                for (let id = 1; id <= 50; id++) {
+                for (let id = 1; id <= 10; id++) {
                   try {
                     const res = await fetch('/api/messages/' + id, {credentials:'include'});
                     if (res.ok) {
